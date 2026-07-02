@@ -1,10 +1,19 @@
 package com.bank.entity;
 
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,13 +34,22 @@ public class Bank {
 	@Column(name = "Bank_Name")
 	private String bankName;
 	
-	@Column (name =  "IFSC_Code" , unique = true )
+	@Column(name =  "IFSC_Code" , unique = true )
 	private String ifscCode;
 	
-	@Column   (name =  "Branch_Name")
+	@Column(name =  "Branch_Name")
 	private String branchName;
 	
-	@Column  (name =  "Contact_Number" , length = 10)
+	@Column(name ="Contact_Number" , length = 10)
 	private String contactNumber;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "Address_Id")
+	private Address address;
+	
+	@OneToMany(mappedBy = "bank" , cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Account> accounts;
+	
 
 }

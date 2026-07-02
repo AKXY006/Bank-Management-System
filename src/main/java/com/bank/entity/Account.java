@@ -1,11 +1,17 @@
 package com.bank.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,19 +26,26 @@ public class Account {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "Bank Id" , unique = true)
-	private Integer bankid;
+	@Column(name = "Account_Id")
+	private Integer accountId;
 	
-	@Column(name = "Bank Name")
-	private String bankname;
+	@Column(name = "Account_No" , unique = true)
+	private Long bankNo;
 	
-	@Column (name =  "IFSC Code" , unique = true )
-	private String ifscCode;
+	@Column(name =  "Account_Holder_Name" )
+	private String accountHolderName;
 	
-	@Column   (name =  "Branch Name")
-	private String branchName;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "Account_Type")
+	private AccountType accountType;
 	
-	@Column  (name =  "Contact Number" , length = 10)
-	private String contactNumber;
+	@Column(name ="Balance")
+	private double balance;
+	
+	@ManyToOne
+	@JoinColumn(name = "Bank_Id")
+	@JsonIgnore
+	private Bank bank;
+	
 
 }
