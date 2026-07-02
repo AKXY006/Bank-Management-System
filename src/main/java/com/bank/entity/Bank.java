@@ -48,7 +48,6 @@ public class Bank {
 	private Address address;
 	
 	@OneToMany(mappedBy = "bank" , cascade = CascadeType.ALL)
-	@JsonIgnore
 	private List<Account> accounts;
 	
 
