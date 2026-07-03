@@ -29,8 +29,8 @@ public class Account {
 	@Column(name = "Account_Id")
 	private Integer accountId;
 	
-	@Column(name = "Account_No" , unique = true)
-	private Long bankNo;
+	@Column(name = "Account_Number" , unique = true)
+	private Long accountNumber;
 	
 	@Column(name =  "Account_Holder_Name" )
 	private String accountHolderName;
