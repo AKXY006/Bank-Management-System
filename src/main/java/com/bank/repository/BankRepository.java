@@ -23,12 +23,12 @@ public interface BankRepository extends JpaRepository<Bank, Integer>{
 		Optional<Bank> findByIfscCode(String ifscCode);
 		
 		//7) Get Bank By AddressId
-		Optional<Bank> findBankByAddressId(Integer addressId);
+		Optional<Bank> findByAddressAddressId(Integer addressId);
 		
 		//8) Get Bank By City ---> GetMapping 
-		List<Bank> findBankByCity(String city);
+		List<Bank> findByAddressCity(String city);
 		
 		//9) Get Bank By ContactNo ---> GetMapping 
-		Optional<Bank> findBankByContact(String contact);
+		Optional<Bank> findByContactNumber(String contactNumber);
 
 }

@@ -40,7 +40,7 @@ public class Account {
 	private AccountType accountType;
 	
 	@Column(name ="Balance")
-	private double balance;
+	private Double balance;
 	
 	@ManyToOne
 	@JoinColumn(name = "Bank_Id")

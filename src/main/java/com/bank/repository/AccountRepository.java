@@ -25,13 +25,13 @@ public interface AccountRepository extends JpaRepository<Account, Integer>{
 	//7) Transfer Amount
 	
 	//8) Get Account By BankId
-	List<Account> findByBankId(Integer bankId);
+	List<Account> findByBankBankId(Integer bankId);
 	
 	//9) Get Account By Type
 	List<Account> findByAccountType(AccountType accountType);
 	
 	//10) Get Account Balance GreaterThan Value
-	List<Account> findByBalanceGreaterThan(double balance);
+	List<Account> findByBalanceGreaterThan(Double balance);
 	
 	//11) Get Account By Pagination 
 	

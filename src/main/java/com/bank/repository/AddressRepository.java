@@ -9,19 +9,19 @@ import com.bank.entity.Address;
 
 public interface AddressRepository extends JpaRepository<Address, Integer>{
 	
-	//1) Get Address By id --> GetMapping (save());
+	//1) Get Address By id --> GetMapping (findById());
 	
-	//2) Update Mapping By id ---> PutMapping / PatchMapping ( findById() );
+	//2) Update Mapping By id ---> PutMapping / PatchMapping ( findById() + save() );
 	
 	//3) Get Address By bankId ---> GetMapping ( findById() );
 	
 	//4) Get Address By city ----> GetMapping (finByCity() );
-	List<Address>  finByCity(String city);
+	List<Address>  findByCity(String city);
 	
 	//5) Get Address By City And Street   ---> GetMapping (findByCityAndStreet());
 	Optional<Address> findByCityAndStreet(String city, String street);
 	
-	//6) Get Address By pincode  ----> GetMapping (findByPincode());
+	//6) Get Address By Pincode  ----> GetMapping (findByPincode());
 	List<Address> findByPincode(String pincode);
 	
 	
