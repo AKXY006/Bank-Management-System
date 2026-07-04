@@ -3,13 +3,13 @@ package com.bank.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bank.repository.AccountRepository;
+import com.bank.repository.BankRepository;
 
 @Service
-public class AccountService {
+public class BankServiceImp {
 	
 	@Autowired
-	private AccountRepository accountRepository;
+	private BankRepository bankRepository;
 	
 	
 

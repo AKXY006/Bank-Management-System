@@ -22,4 +22,27 @@ public class MyException extends ResponseEntityExceptionHandler {
 	    	
 	    	return new ResponseEntity<>(responseStructure,HttpStatus.NOT_FOUND);
 	}
-}
+	    
+	    @ExceptionHandler(NoRecordAvailableException.class)
+	    public ResponseEntity<ResponseStructure<String>> handleNoRecordAvailableException(NoRecordAvailableException exception){
+	    	
+	    	ResponseStructure<String> responseStructure = new ResponseStructure<String>();
+	    	responseStructure.setStatusCode(HttpStatus.NOT_FOUND.value());
+	    	responseStructure.setMessage("Failed");
+	    	responseStructure.setData(exception.getMessage());
+	    	
+	    	return new ResponseEntity<>(responseStructure,HttpStatus.NOT_FOUND);
+	    }
+	    
+	    @ExceptionHandler(RecordAlreadyExistException.class)
+	    public ResponseEntity<ResponseStructure<String>> handleRecordAlreadyExistException(RecordAlreadyExistException exception){
+	    	
+	    	ResponseStructure<String> responseStructure = new ResponseStructure<String>();
+	    	responseStructure.setStatusCode(HttpStatus.CONFLICT.value());
+	    	responseStructure.setMessage("Record Already Present");
+            responseStructure.setData(exception.getMessage());
+            
+            return new ResponseEntity<>(responseStructure,HttpStatus.CONFLICT);
+	    	}
+	    }
+

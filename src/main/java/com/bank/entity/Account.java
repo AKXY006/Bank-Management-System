@@ -1,6 +1,5 @@
 package com.bank.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -47,5 +46,4 @@ public class Account {
 	@JsonIgnore
 	private Bank bank;
 	
-
 }

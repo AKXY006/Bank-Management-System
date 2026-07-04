@@ -11,11 +11,11 @@ public interface BankRepository extends JpaRepository<Bank, Integer>{
 	 
 	    //1) Create bank ---> PostMapping (save());
 	
-		//2) Get all Bank ---> GetMapping (saveAll());
+		//2) Get all Bank ---> GetMapping (findAll());
 		
 		//3) Get Bank By id ----> GetMapping (findById());
 		
-		//4) Delete Bank ---> DeleteMapping (findById());
+		//4) Delete Bank ---> DeleteMapping (deleteById());
 		
 		//5) Get Bank By Pagination and Sorting 
 		

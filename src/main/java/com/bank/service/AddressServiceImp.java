@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.bank.repository.AddressRepository;
 
 @Service
-public class AddressService {
+public class AddressServiceImp {
 	
 	@Autowired
 	private AddressRepository addressRepository;
