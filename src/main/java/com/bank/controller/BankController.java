@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,4 +41,30 @@ public class BankController {
 	public ResponseEntity<ResponseStructure<Bank>> getBookById(@PathVariable Integer id){
 		return bankService.getBankById(id);
 	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<ResponseStructure<Bank>> deleteBank(@PathVariable Integer id){
+		return bankService.deleteBank(id);
+	}
+	
+	@GetMapping("/ifscCode/{ifscCode}")
+	public ResponseEntity<ResponseStructure<Bank>> getBankByIfscCode(@PathVariable String ifscCode){
+		return bankService.getBankByIfscCode(ifscCode);
+	}
+	
+	@GetMapping("/AddressId/{addressId}")
+	public ResponseEntity<ResponseStructure<Bank>> getByAddressId(@PathVariable Integer addressId){
+		return bankService.getBankByAddressId(addressId);
+	}
+	
+	@GetMapping("/city/{city}")
+	public ResponseEntity<ResponseStructure<List<Bank>>> getByCity(@PathVariable String city){
+		return bankService.getBankByCity(city);
+	}
+	
+	
+	
+	
+	
+	
 }

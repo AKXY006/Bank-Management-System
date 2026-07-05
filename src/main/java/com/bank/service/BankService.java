@@ -95,9 +95,94 @@ public class BankService {
 		     
 		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
 	}
-	
+            
+            
+        	//4) Delete Bank
+            public ResponseEntity<ResponseStructure<Bank>> deleteBank(Integer bankId){
+            	
+            	Optional<Bank> optional = bankRepository.findById(bankId);
+            	
+            	if(optional.isEmpty()) {
+            		throw new IdNotFoundException("Bank Id Does Not Exist");
+            	}
+            	
+            	 Bank bank = optional.get();
+            	 
+            	 if (!bank.getAccounts().isEmpty()) {
+            	        throw new RuleValidationException("Bank cannot be deleted because it has active accounts");
+            	    }
+            	 
+                 bankRepository.deleteById(bankId);
+                 
+    		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
+    		     responseStructure.setStatusCode(HttpStatus.OK.value());
+    		     responseStructure.setMessage("Bank Delete successful");
+    		     responseStructure.setData(bank);
+    		
+    		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);  
+               }
+            
+            
+          //6) Get by ifscCode
+            public ResponseEntity<ResponseStructure<Bank>> getBankByIfscCode(String ifscCode){
+        		
+     		   Optional<Bank> bank=bankRepository.findByIfscCode(ifscCode);
+     		   
+     		   if(bank.isEmpty()) {
+     			   throw new IdNotFoundException("ifscCode does Not Found");
+     		   }
+
+     		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
+     		     responseStructure.setStatusCode(HttpStatus.OK.value());
+     		     responseStructure.setMessage("Bank found successful");
+     		     responseStructure.setData(bank.get());
+     		     
+     		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
+     	   }
+            
+            
+          //7) Get Bank By AddressId
+            public ResponseEntity<ResponseStructure<Bank>> getBankByAddressId(Integer id){
+        		
+      		   Optional<Bank> bank=bankRepository.findByAddressAddressId(id);
+      		   
+      		   if(bank.isEmpty()) {
+      			   throw new IdNotFoundException("AddressId does Not Found");
+      		   }
+
+      		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
+      		     responseStructure.setStatusCode(HttpStatus.OK.value());
+      		     responseStructure.setMessage("Bank found successful");
+      		     responseStructure.setData(bank.get());
+      		     
+      		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
+      	   }
+            
+          //8) Get Bank By City
+            public ResponseEntity<ResponseStructure<List<Bank>>> getBankByCity(String city){
+        		
+       		   List<Bank> banks=bankRepository.findByAddressCity(city);
+       		   
+       		   if(banks.isEmpty()) {
+       			   throw new IdNotFoundException("City does Not Found");
+       		   }
+       		  
+       		     ResponseStructure<List<Bank>> responseStructure = new ResponseStructure<>();
+       		     responseStructure.setStatusCode(HttpStatus.OK.value());
+       		     responseStructure.setMessage("Bank found successful");
+       		     responseStructure.setData(banks);
+       		     
+       		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
+       	   }
+    		
+    		
+            
+            
+            
+   }
+           
 	
 	
 	
 
-}
+
