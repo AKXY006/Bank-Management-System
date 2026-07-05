@@ -44,5 +44,23 @@ public class MyException extends ResponseEntityExceptionHandler {
             
             return new ResponseEntity<>(responseStructure,HttpStatus.CONFLICT);
 	    	}
-	    }
+	    
+	    @ExceptionHandler(RuleValidationException.class)
+	    public ResponseEntity<ResponseStructure<String>> handleRuleValidationException(RuleValidationException exception){
+	    	
+	    	ResponseStructure<String> responseStructure = new ResponseStructure<String>();
+	    	responseStructure.setStatusCode(HttpStatus.BAD_REQUEST.value());
+	    	responseStructure.setMessage("Record Already Present");
+            responseStructure.setData(exception.getMessage());
+            
+            return new ResponseEntity<>(responseStructure,HttpStatus.BAD_REQUEST);
+	    	}
+	    
+	    	
+	    	}
+	   
+	    
+	    
+         
+
 

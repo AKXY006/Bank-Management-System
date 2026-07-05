@@ -1,7 +1,10 @@
 package com.bank.entity;
 
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,15 +41,16 @@ public class Bank {
 	@Column(name =  "Branch_Name")
 	private String branchName;
 	
-	@Column(name ="Contact_Number" , length = 10)
+	@Column(name ="Contact_Number" , length = 10 , unique = true)
 	private String contactNumber;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "Address_Id")
 	private Address address;
 	
+
 	@OneToMany(mappedBy = "bank" , cascade = CascadeType.ALL)
-	private List<Account> accounts;
+	private List<Account> accounts = new ArrayList<Account>();
 	
 
 }
