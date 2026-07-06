@@ -68,7 +68,40 @@ public class MyException extends ResponseEntityExceptionHandler {
             return new ResponseEntity<>(responseStructure,HttpStatus.NOT_FOUND);
 	    	}
 	    
+	    @ExceptionHandler(AccountNumberAlreadyExitException.class)
+	    public ResponseEntity<ResponseStructure<String>> handleAccountNumberAlreadyExistException(AccountNumberAlreadyExitException exception){
 	    	
+	    	ResponseStructure<String> responseStructure = new ResponseStructure<String>();
+	    	responseStructure.setStatusCode(HttpStatus.BAD_REQUEST.value());
+	    	responseStructure.setMessage(exception.getMessage());
+            responseStructure.setData(exception.getMessage());
+            
+            return new ResponseEntity<>(responseStructure,HttpStatus.BAD_REQUEST);
+	    	}
+	    
+	    @ExceptionHandler(AccountNotFoundException.class)
+	    public ResponseEntity<ResponseStructure<String>> handleAccountNotFoundException(AccountNotFoundException exception){
+	    	
+	    	ResponseStructure<String> responseStructure = new ResponseStructure<String>();
+	    	responseStructure.setStatusCode(HttpStatus.NOT_FOUND.value());
+	    	responseStructure.setMessage(exception.getMessage());
+            responseStructure.setData(exception.getMessage());
+            
+            return new ResponseEntity<>(responseStructure,HttpStatus.NOT_FOUND);
+	    	}
+	    
+	    @ExceptionHandler(BankNotFoundException.class)
+	    public ResponseEntity<ResponseStructure<String>> handleBankNotFoundException(BankNotFoundException exception){
+	    	
+	    	ResponseStructure<String> responseStructure = new ResponseStructure<String>();
+	    	responseStructure.setStatusCode(HttpStatus.NOT_FOUND.value());
+	    	responseStructure.setMessage(exception.getMessage());
+            responseStructure.setData(exception.getMessage());
+            
+            return new ResponseEntity<>(responseStructure,HttpStatus.NOT_FOUND);
+	    	}
+ 
+	     
 	    	}
 	   
 	    

@@ -51,19 +51,5 @@ public class AddressController {
 	public ResponseEntity<ResponseStructure<List<Address>>> findByPincode(@PathVariable String pincode){
 		return addressService.findByPincode(pincode);
 	}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 
 }
