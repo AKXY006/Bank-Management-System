@@ -16,15 +16,12 @@ import com.bank.exception.RuleValidationException;
 import com.bank.repository.BankRepository;
 import com.bank.util.ResponseStructure;
 
-
-
 @Service
 public class BankService {
 
 	@Autowired
 	private BankRepository bankRepository;
 	
-
 	public ResponseEntity<ResponseStructure<Bank>> saveBank(Bank bank){
 		
 		Optional<Bank> ifscBank = bankRepository.findByIfscCode(bank.getIfscCode());
@@ -62,7 +59,6 @@ public class BankService {
 	}
      
 	
-	//Get All Bank
 	public ResponseEntity<ResponseStructure<List<Bank>>> getAllBank(){
 		
 		List<Bank> banks=bankRepository.findAll();
@@ -79,7 +75,7 @@ public class BankService {
 	}
 	
 	
-	       //Get bank by id
+
             public ResponseEntity<ResponseStructure<Bank>> getBankById(Integer bankId){
 		
 		   Optional<Bank> bank=bankRepository.findById(bankId);
@@ -121,9 +117,9 @@ public class BankService {
     		
     		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);  
                }
+
             
             
-          //6) Get by ifscCode
             public ResponseEntity<ResponseStructure<Bank>> getBankByIfscCode(String ifscCode){
         		
      		   Optional<Bank> bank=bankRepository.findByIfscCode(ifscCode);
@@ -174,11 +170,20 @@ public class BankService {
        		     
        		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
        	   }
-    		
-    		
             
-            
-            
+            public ResponseEntity<ResponseStructure<Bank>> getBankByContactNumber(String contactNumber){
+        		   Optional<Bank> bank=bankRepository.findByContactNumber(contactNumber);
+        		   
+        		   if(bank.isEmpty()) {
+        			   throw new IdNotFoundException("ContactNumber does Not Found");
+        		   }
+        		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
+        		     responseStructure.setStatusCode(HttpStatus.OK.value());
+        		     responseStructure.setMessage("Bank found successful");
+        		     responseStructure.setData(bank.get());
+        		     
+        		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
+        	   }        
    }
            
 	

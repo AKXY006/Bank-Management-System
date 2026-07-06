@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,9 +61,8 @@ public class BankController {
 		return bankService.getBankByCity(city);
 	}
 	
-	
-	
-	
-	
-	
+	@GetMapping("/contactnumber/{contactNumber}")
+	public ResponseEntity<ResponseStructure<Bank>> getByContactNumber(@PathVariable String contactNumber){
+		return bankService.getBankByContactNumber(contactNumber);
+	}
 }
