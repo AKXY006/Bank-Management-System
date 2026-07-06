@@ -56,6 +56,18 @@ public class MyException extends ResponseEntityExceptionHandler {
             return new ResponseEntity<>(responseStructure,HttpStatus.BAD_REQUEST);
 	    	}
 	    
+	    
+	    @ExceptionHandler(CityNotFoundException.class)
+	    public ResponseEntity<ResponseStructure<String>> handleCityNotFoundException(CityNotFoundException exception){
+	    	
+	    	ResponseStructure<String> responseStructure = new ResponseStructure<String>();
+	    	responseStructure.setStatusCode(HttpStatus.NOT_FOUND.value());
+	    	responseStructure.setMessage("Failed");
+            responseStructure.setData(exception.getMessage());
+            
+            return new ResponseEntity<>(responseStructure,HttpStatus.NOT_FOUND);
+	    	}
+	    
 	    	
 	    	}
 	   

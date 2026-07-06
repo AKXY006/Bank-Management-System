@@ -1,5 +1,7 @@
 package com.bank.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,11 +32,25 @@ public class AddressController {
 		return addressService.updatedAddress(addressId,address);
 	}
 	
-	@GetMapping("/{bankid}")
+	@GetMapping("/bankid/{bankId}")
 	public ResponseEntity<ResponseStructure<Address>> findAddressByBankId(@PathVariable Integer bankId){
 		return addressService.findAddressByBankId(bankId);
 	}
 	
+	@GetMapping("/city/{city}")
+	public ResponseEntity<ResponseStructure<List<Address>>> findByCity(@PathVariable String city){
+		return addressService.findByCity(city);
+	}
+	
+	@GetMapping("/{city}/{street}")
+	public ResponseEntity<ResponseStructure<List<Address>>> findByCityAndStreet(@PathVariable String city, @PathVariable String street ){
+		return addressService.findByCityAndStreet(city,street);
+	}
+	
+	@GetMapping("/pincode/{pincode}")
+	public ResponseEntity<ResponseStructure<List<Address>>> findByPincode(@PathVariable String pincode){
+		return addressService.findByPincode(pincode);
+	}
 			
 			
 			
