@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.bank.entity.Address;
+import com.bank.entity.Bank;
 import com.bank.exception.IdNotFoundException;
 import com.bank.repository.AddressRepository;
+import com.bank.repository.BankRepository;
 import com.bank.util.ResponseStructure;
 
 
@@ -19,6 +21,9 @@ public class AddressService{
 	
 	@Autowired
 	private AddressRepository addressRepository;
+	
+	@Autowired
+	private BankRepository bankRepository;
 	
 	public ResponseEntity<ResponseStructure<Address>> findById(Integer id){
 		
@@ -62,6 +67,24 @@ public class AddressService{
 		return new ResponseEntity<>(responseStructure,HttpStatus.OK);
 		
 		}
+	
+	   public ResponseEntity<ResponseStructure<Address>> findAddressByBankId(Integer id){
+       Optional<Bank> optional = bankRepository.findById(id);
+		
+		    if(optional.isEmpty()) {
+			   throw new IdNotFoundException("Id Not Found");
+		    }
+			   Bank bank = optional.get();
+			   Address address = bank.getAddress();
+			     
+			  ResponseStructure<Address> responseStructure = new ResponseStructure<Address>();
+			  responseStructure.setStatusCode(HttpStatus.OK.value());
+				responseStructure.setMessage("Address Found Successfully");
+				responseStructure.setData(address);
+				
+				return ResponseEntity.ok(responseStructure);    
+				
+	        }
 	
 	
 	

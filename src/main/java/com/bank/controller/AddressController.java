@@ -29,5 +29,25 @@ public class AddressController {
 	public ResponseEntity<ResponseStructure<Address>> updatedAddress(@PathVariable Integer addressId , @RequestBody Address address){
 		return addressService.updatedAddress(addressId,address);
 	}
+	
+	@GetMapping("/{bankid}")
+	public ResponseEntity<ResponseStructure<Address>> findAddressByBankId(@PathVariable Integer bankId){
+		return addressService.findAddressByBankId(bankId);
+	}
+	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 }
