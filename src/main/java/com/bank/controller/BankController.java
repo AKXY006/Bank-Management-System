@@ -18,7 +18,6 @@ import com.bank.entity.Bank;
 import com.bank.service.BankService;
 import com.bank.util.ResponseStructure;
 
-
 @RestController
 @RequestMapping("/bank")
 public class BankController {
