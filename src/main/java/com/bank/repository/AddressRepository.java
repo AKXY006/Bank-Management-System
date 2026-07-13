@@ -9,7 +9,6 @@ import com.bank.entity.Address;
 
 public interface AddressRepository extends JpaRepository<Address, Integer>{
 	
-
 	Optional<Address> findByBankBankId(Integer bankId);
 
 	List<Address>  findByCity(String city);
@@ -17,7 +16,5 @@ public interface AddressRepository extends JpaRepository<Address, Integer>{
 	List<Address> findByCityAndStreet(String city, String street);
 
 	List<Address> findByPincode(String pincode);
-
-
 
 }

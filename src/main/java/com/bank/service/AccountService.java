@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,7 @@ import com.bank.exception.AccountNotFoundException;
 import com.bank.exception.AccountNumberAlreadyExitException;
 import com.bank.exception.BankNotFoundException;
 import com.bank.exception.IdNotFoundException;
+import com.bank.exception.RuleValidationException;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.BankRepository;
 import com.bank.util.ResponseStructure;
@@ -31,21 +31,20 @@ public class AccountService{
 	@Autowired
 	private BankRepository bankRepository;
 	
+	//1) create account
 	public ResponseEntity<ResponseStructure<Account>>  saveAccount(Account account , Integer bankId){
 		
 		Optional<Bank> optionalBank = bankRepository.findById(bankId);
-		
 		if(optionalBank.isEmpty()) {
 			throw new BankNotFoundException("Bank does not exist");
-		}
+		   }
 		
 		Optional<Account> optionalAccount = accountRepository.findByAccountNumber(account.getAccountNumber() );
-		
 		if(optionalAccount.isPresent()) {
 			throw new AccountNumberAlreadyExitException("Account number already Exist");
-		}
+		    }
 		
-		 account.setBank(optionalBank.get());
+		account.setBank(optionalBank.get());
 		 
 		Account saveAccount = accountRepository.save(account);
 		
@@ -55,11 +54,10 @@ public class AccountService{
 		responseStructure.setData(saveAccount);
 		
 		return new ResponseEntity<>(responseStructure,HttpStatus.CREATED);
-		
-	
 	}
 	
 	
+	//2)get all accounts
 	public ResponseEntity<ResponseStructure<List<Account>>>  findAllAccounts(){
 		List<Account> optional = accountRepository.findAll();
 		
@@ -75,38 +73,97 @@ public class AccountService{
 	    return new ResponseEntity<>(responseStructure, HttpStatus.OK);
 	}
 	
+	
+	//3)find by id
 	public ResponseEntity<ResponseStructure<Account>> findById(Integer accountId){
 		Optional<Account> optional = accountRepository.findById(accountId);
 		
 		if(optional.isEmpty()) {
 			throw new IdNotFoundException("Id Not Found");
-		}
+		   }
 		
-		ResponseStructure<Account> responseStructure = new ResponseStructure<>();
-		 responseStructure.setStatusCode(HttpStatus.OK.value());
+		    ResponseStructure<Account> responseStructure = new ResponseStructure<>();
+		    responseStructure.setStatusCode(HttpStatus.OK.value());
 		    responseStructure.setMessage("All Accounts Found Successfully");
 		    responseStructure.setData(optional.get());
 
 		    return new ResponseEntity<>(responseStructure, HttpStatus.OK);
-		
-	}
+		   }
 	
-	
-	public ResponseEntity<ResponseStructure<Account>> deleteById(Integer accountId){
+	    //4) delete by id
+	    public ResponseEntity<ResponseStructure<Account>> deleteById(Integer accountId){
 		Optional<Account> optional = accountRepository.findById(accountId);
 		
 		if(optional.isEmpty()) {
 			throw new IdNotFoundException("Id Not Found");
 		}
-		
-		ResponseStructure<Account> responseStructure = new ResponseStructure<>();
-		 responseStructure.setStatusCode(HttpStatus.OK.value());
+		    accountRepository.deleteById(accountId);		
+		    ResponseStructure<Account> responseStructure = new ResponseStructure<>();
+		    responseStructure.setStatusCode(HttpStatus.OK.value());
 		    responseStructure.setMessage("Accounts delete Successfully");
 		    responseStructure.setData(optional.get());
 
 		    return new ResponseEntity<>(responseStructure, HttpStatus.OK);
-	}
+	    }
 	
+	    
+	    //5)deposite Amount
+	     public ResponseEntity<ResponseStructure<Account>> depositeAmount(Long accountNUmber, Integer depositebalance){
+	    	 
+	    	 if(depositebalance<=0) {
+	    		 throw new RuleValidationException("deposite amount must greater than 0");
+	    	 }
+	    	 
+	    	 Optional<Account> optional = accountRepository.findByAccountNumber(accountNUmber);
+	    	 
+	    	 if(optional.isEmpty()) {
+	    		 throw new AccountNotFoundException("Invalid account number");
+	    	 }
+	    	 
+	    	 Account account = optional.get();
+	    	 account.setBalance(account.getBalance()+depositebalance);
+	    	 Account savedAccount = accountRepository.save(account);
+	    	 
+	    	 ResponseStructure<Account> responseStructure = new ResponseStructure<>();
+	    	 responseStructure.setStatusCode(HttpStatus.OK.value());
+	    	 responseStructure.setMessage("Amount deposite successfully");
+	    	 responseStructure.setData(savedAccount);
+	    	 
+	    	 return new ResponseEntity<>(responseStructure,HttpStatus.OK);
+	    	 
+	     }
+	     
+	   //6) Withdraw Amount
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	public ResponseEntity<ResponseStructure<List<Account>>> findByBankId(Integer bankId){
 		Optional<Bank> optional = bankRepository.findById(bankId);
 		

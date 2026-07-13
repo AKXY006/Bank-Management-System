@@ -28,8 +28,7 @@ public class AccountController {
 	
 	@PostMapping("/{bankId}")
 	public ResponseEntity<ResponseStructure<Account>> saveAccount( @RequestBody Account account, @PathVariable Integer bankId){
-		return accountService.saveAccount(account,bankId);
-		
+		return accountService.saveAccount(account,bankId);	
 	}
 	
 	@GetMapping
@@ -52,18 +51,9 @@ public class AccountController {
 		return accountService.findByBankId(bankId);
 	}
 	
-	
 	@GetMapping("/type/{accountType}")
 	public ResponseEntity<ResponseStructure<List<Account>>> findByAccountType(@PathVariable AccountType accountType) {
 	    return accountService.findByAccountType(accountType);
 	}
 	
-	
-	
-
-	
-	
-	
-	
-
 }

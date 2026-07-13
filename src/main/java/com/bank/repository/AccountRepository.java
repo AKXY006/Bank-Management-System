@@ -11,15 +11,11 @@ import com.bank.entity.AccountType;
 public interface AccountRepository extends JpaRepository<Account, Integer>{
 
 	List<Account> findByBankBankId(Integer bankId);
-	
 
 	List<Account> findByAccountType(AccountType accountType);
 
 	List<Account> findByBalanceGreaterThan(Double balance);
 	
 	Optional<Account> findByAccountNumber(Long accountNumber);
-	
-
-	
 
 }
