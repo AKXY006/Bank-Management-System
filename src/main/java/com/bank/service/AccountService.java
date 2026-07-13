@@ -16,10 +16,13 @@ import com.bank.exception.AccountNotFoundException;
 import com.bank.exception.AccountNumberAlreadyExitException;
 import com.bank.exception.BankNotFoundException;
 import com.bank.exception.IdNotFoundException;
+import com.bank.exception.NoRecordAvailableException;
 import com.bank.exception.RuleValidationException;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.BankRepository;
 import com.bank.util.ResponseStructure;
+
+import jakarta.transaction.Transactional;
 
 
 @Service
@@ -134,37 +137,79 @@ public class AccountService{
 	     }
 	     
 	   //6) Withdraw Amount
+	     public ResponseEntity<ResponseStructure<Account>> withdrawAmount(Long accountNumber, Integer withdrawalAmount) {
+
+	         if (withdrawalAmount <= 0) {
+	             throw new RuleValidationException("withdrawal amount must be greater than 0");
+	         }
+
+	         Optional<Account> optional = accountRepository.findByAccountNumber(accountNumber);
+	         if (optional.isEmpty()) {
+	             throw new AccountNotFoundException("account number invalid");
+	         }
+
+	         Account account = optional.get();
+
+	         if (withdrawalAmount > account.getBalance()) {
+	             throw new RuleValidationException("Insufficient Balance");
+	         }
+
+	         account.setBalance(account.getBalance() - withdrawalAmount);
+	         Account savedAccount = accountRepository.save(account);
+
+	         ResponseStructure<Account> responseStructure = new ResponseStructure<>();
+	         responseStructure.setStatusCode(HttpStatus.OK.value());
+	         responseStructure.setMessage("Amount Withdrawn Successfully");
+	         responseStructure.setData(savedAccount);
+
+	         return new ResponseEntity<>(responseStructure, HttpStatus.OK);
+	     }
 	    
+	     
+	     //7)transfer amount 
+	     @Transactional
+	     public ResponseEntity<ResponseStructure<Account>> transferAmount(Long senderAccountNumber , Long receiverAccountNumber , Integer transferbalance){
+	    	 Optional<Account> senderaccount = accountRepository.findByAccountNumber(senderAccountNumber);
+	    	 if(senderaccount.isEmpty()) {
+	    		 throw new AccountNotFoundException("Sender account number not exist");
+	    	 }
+	    	 
+	    	 Optional<Account> receiveraccount = accountRepository.findByAccountNumber(receiverAccountNumber);
+	    	 if(receiveraccount.isEmpty()) {
+	    		 throw new AccountNotFoundException("Sender account number not exist");
+	    	 }
+	    	 
+	    	 if (transferbalance <= 0) {
+	             throw new RuleValidationException("transfer amount must be greater than 0");
+	         }
+	    	 
 	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	public ResponseEntity<ResponseStructure<List<Account>>> findByBankId(Integer bankId){
+	    	 Account saccount = senderaccount.get();
+	    	 Account raccount = receiveraccount.get();
+	    	 
+	    	 
+	    	 if(transferbalance<=saccount.getBalance() ) {
+	    		   
+	    		 saccount.setBalance(saccount.getBalance()-transferbalance);
+	    		 Account savaccount = accountRepository.save(saccount);
+	    		 
+	    		 raccount.setBalance(raccount.getBalance()+transferbalance);
+	    		 Account recacount = accountRepository.save(raccount);
+	    		 
+	    	 } else {
+	    		 throw new RuleValidationException("Insufficient balance");
+	    	 }
+	    	 
+	    	 ResponseStructure<Account> responseStructure = new ResponseStructure<>();
+	    	 responseStructure.setStatusCode(HttpStatus.OK.value());
+	    	 responseStructure.setMessage("Transfer Successful");
+	    	 responseStructure.setData(saccount);
+	    	 
+	    	 return new ResponseEntity<>(responseStructure,HttpStatus.OK);
+	    	 }
+
+	     //8) get by bank id
+	     ResponseEntity<ResponseStructure<List<Account>>> findByBankId(Integer bankId){
 		Optional<Bank> optional = bankRepository.findById(bankId);
 		
 		if(optional.isEmpty()) {
@@ -180,7 +225,9 @@ public class AccountService{
 
 		    return new ResponseEntity<>(responseStructure, HttpStatus.OK);
 	}
-	
+	     
+	   
+	//9)get by account type
 	public ResponseEntity<ResponseStructure<List<Account>>> findByAccountType(AccountType accountType) {
 		List<Account> accounts = accountRepository.findByAccountType(accountType);
 
@@ -195,6 +242,26 @@ public class AccountService{
 		    
 		    return new ResponseEntity<>(responseStructure,HttpStatus.OK);
 	}
+	
+	//10) get by account balance > value
+	public ResponseEntity<ResponseStructure<List<Account>>>  findByAccountBalanceGreaterThan(Double balance){
+		
+		List<Account> accounts = accountRepository.findByBalanceGreaterThan(balance);
+		
+		if(accounts.isEmpty()) {
+			throw new NoRecordAvailableException("No Account found");
+		}
+		
+		ResponseStructure<List<Account>> responseStructure = new ResponseStructure<>();
+		responseStructure.setStatusCode(HttpStatus.OK.value());
+		responseStructure.setMessage("account found successful");
+		responseStructure.setData(accounts);
+		
+		return new ResponseEntity<>(responseStructure,HttpStatus.OK);
+	}
+	
+	//11) get by pagination and sorting
+	
 	
 
 	
