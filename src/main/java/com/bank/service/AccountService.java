@@ -209,7 +209,7 @@ public class AccountService{
 	    	 }
 
 	     //8) get by bank id
-	     ResponseEntity<ResponseStructure<List<Account>>> findByBankId(Integer bankId){
+	     public ResponseEntity<ResponseStructure<List<Account>>> findByBankId(Integer bankId){
 		Optional<Bank> optional = bankRepository.findById(bankId);
 		
 		if(optional.isEmpty()) {

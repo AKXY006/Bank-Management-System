@@ -119,7 +119,7 @@ public class BankService {
                }
 
             
-            
+            //6)get by ifsccode
             public ResponseEntity<ResponseStructure<Bank>> getBankByIfscCode(String ifscCode){
         		
      		   Optional<Bank> bank=bankRepository.findByIfscCode(ifscCode);
@@ -171,6 +171,7 @@ public class BankService {
        		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
        	   }
             
+            //9) get Bank By ContactNumber
             public ResponseEntity<ResponseStructure<Bank>> getBankByContactNumber(String contactNumber){
         		   Optional<Bank> bank=bankRepository.findByContactNumber(contactNumber);
         		   
