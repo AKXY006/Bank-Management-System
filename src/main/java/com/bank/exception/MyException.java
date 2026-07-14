@@ -68,8 +68,8 @@ public class MyException extends ResponseEntityExceptionHandler {
             return new ResponseEntity<>(responseStructure,HttpStatus.NOT_FOUND);
 	    	}
 	    
-	    @ExceptionHandler(AccountNumberAlreadyExitException.class)
-	    public ResponseEntity<ResponseStructure<String>> handleAccountNumberAlreadyExistException(AccountNumberAlreadyExitException exception){
+	    @ExceptionHandler(AccountNumberAlreadyExistException.class)
+	    public ResponseEntity<ResponseStructure<String>> handleAccountNumberAlreadyExistException(AccountNumberAlreadyExistException exception){
 	    	
 	    	ResponseStructure<String> responseStructure = new ResponseStructure<String>();
 	    	responseStructure.setStatusCode(HttpStatus.BAD_REQUEST.value());
