@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,7 +26,8 @@ public class BankService {
 	@Autowired
 	private BankRepository bankRepository;
 	
-	public ResponseEntity<ResponseStructure<Bank>> saveBank(Bank bank){
+	   //1) create bank
+	   public ResponseEntity<ResponseStructure<Bank>> saveBank(Bank bank){
 		
 		Optional<Bank> ifscBank = bankRepository.findByIfscCode(bank.getIfscCode());
 	    if (ifscBank.isPresent()) {
@@ -46,6 +51,11 @@ public class BankService {
 	    if (bank.getAddress().getPincode() == null || bank.getAddress().getPincode().length() != 6) {
 	        throw new RuleValidationException("Pincode must be exactly 6 digits.");
 	    }
+	    
+	    if (bank.getAddress().getPincode() == null|| bank.getAddress().getPincode().length() != 6) {
+	        throw new RuleValidationException("Pincode must be exactly 6 digits.");
+	    }
+
 
 	   Bank savedBank = bankRepository.save(bank);
 	   
@@ -56,33 +66,31 @@ public class BankService {
 	   
 	   return new ResponseEntity<>(responseStructure, HttpStatus.CREATED);
 	   	
-	}
+	  }
      
-	
-	public ResponseEntity<ResponseStructure<List<Bank>>> getAllBank(){
+	         //2) get all bank
+	         public ResponseEntity<ResponseStructure<List<Bank>>> getAllBank(){
+		     List<Bank> banks=bankRepository.findAll();
 		
-		List<Bank> banks=bankRepository.findAll();
-		
-		if(banks.isEmpty()) {
-			throw new NoRecordAvailableException("No Record");		
-		}		     
+		     if(banks.isEmpty()) {
+			    throw new NoRecordAvailableException("No Record");		
+		     }		     
 		     ResponseStructure<List<Bank>> responseStructure = new ResponseStructure<>();
 		     responseStructure.setStatusCode(HttpStatus.OK.value());
 		     responseStructure.setMessage("Get All Bank");
 		     responseStructure.setData(banks);
 		     
 		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
-	}
+	         }
 	
 	
-
-            public ResponseEntity<ResponseStructure<Bank>> getBankById(Integer bankId){
-		
-		   Optional<Bank> bank=bankRepository.findById(bankId);
+              //3) find by id
+              public ResponseEntity<ResponseStructure<Bank>> getBankById(Integer bankId){
+		      Optional<Bank> bank=bankRepository.findById(bankId);
 		   
-		   if(bank.isEmpty()) {
-			   throw new IdNotFoundException("Id Not Found");
-		   }
+		      if(bank.isEmpty()) {
+			     throw new IdNotFoundException("Id Not Found");
+		      }
 		     
 		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
 		     responseStructure.setStatusCode(HttpStatus.OK.value());
@@ -90,11 +98,11 @@ public class BankService {
 		     responseStructure.setData(bank.get());
 		     
 		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
-	}
+	         }
             
             
-        	//4) Delete Bank
-            public ResponseEntity<ResponseStructure<Bank>> deleteBank(Integer bankId){
+        	    //4) Delete Bank
+                public ResponseEntity<ResponseStructure<Bank>> deleteBank(Integer bankId){
             	
             	Optional<Bank> optional = bankRepository.findById(bankId);
             	
@@ -102,49 +110,68 @@ public class BankService {
             		throw new IdNotFoundException("Bank Id Does Not Exist");
             	}
             	
-            	 Bank bank = optional.get();
+            	Bank bank = optional.get();
             	 
-            	 if (!bank.getAccounts().isEmpty()) {
-            	        throw new RuleValidationException("Bank cannot be deleted because it has active accounts");
-            	    }
+            	if (!bank.getAccounts().isEmpty()) {
+            	    throw new RuleValidationException("Bank cannot be deleted because it has active accounts");
+            	}
             	 
-                 bankRepository.deleteById(bankId);
+                bankRepository.deleteById(bankId);
                  
-    		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
-    		     responseStructure.setStatusCode(HttpStatus.OK.value());
-    		     responseStructure.setMessage("Bank Delete successful");
-    		     responseStructure.setData(bank);
+    	        ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
+    		    responseStructure.setStatusCode(HttpStatus.OK.value());
+    		    responseStructure.setMessage("Bank Delete successful");
+    		    responseStructure.setData(bank);
     		
-    		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);  
+    		    return new ResponseEntity<>(responseStructure,HttpStatus.OK);  
                }
+                
+
+                   //5) Get by Pagination and Sorting
+                   public ResponseEntity<ResponseStructure<Page<Bank>>> getBankByPaginationAndSorting(int pn,int ps,String field) {
+
+                    Pageable pageable = PageRequest.of(pn, ps, Sort.by(field));
+                    Page<Bank> page = bankRepository.findAll(pageable);
+
+                    if (page.isEmpty()) {
+                        throw new NoRecordAvailableException("No Banks Found");
+                    }
+
+                    ResponseStructure<Page<Bank>> responseStructure = new ResponseStructure<>();
+                    responseStructure.setStatusCode(HttpStatus.OK.value());
+                    responseStructure.setMessage("Banks Found Successfully");
+                    responseStructure.setData(page);
+
+                    return new ResponseEntity<>(responseStructure, HttpStatus.OK);
+                   }
 
             
-            //6)get by ifsccode
-            public ResponseEntity<ResponseStructure<Bank>> getBankByIfscCode(String ifscCode){
+                 //6)get by ifsccode
+                 public ResponseEntity<ResponseStructure<Bank>> getBankByIfscCode(String ifscCode){
         		
-     		   Optional<Bank> bank=bankRepository.findByIfscCode(ifscCode);
+     		     Optional<Bank> bank=bankRepository.findByIfscCode(ifscCode);
      		   
-     		   if(bank.isEmpty()) {
-     			   throw new IdNotFoundException("ifscCode does Not Found");
-     		   }
+     		     if(bank.isEmpty()) {
+     			     throw new IdNotFoundException("ifscCode  Not Found");
+     		     }
 
      		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
      		     responseStructure.setStatusCode(HttpStatus.OK.value());
-     		     responseStructure.setMessage("Bank found successful");
+     		     responseStructure.setMessage("Bank found successfully");
      		     responseStructure.setData(bank.get());
      		     
      		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
-     	   }
+     	         }
             
             
-          //7) Get Bank By AddressId
-            public ResponseEntity<ResponseStructure<Bank>> getBankByAddressId(Integer id){
+                 //7) Get Bank By AddressId
+                 public ResponseEntity<ResponseStructure<Bank>> getBankByAddressId(Integer id){
         		
-      		   Optional<Bank> bank=bankRepository.findByAddressAddressId(id);
+      		     Optional<Bank> bank=bankRepository.findByAddressAddressId(id);
       		   
-      		   if(bank.isEmpty()) {
-      			   throw new IdNotFoundException("AddressId does Not Found");
-      		   }
+      		     if(bank.isEmpty()) {
+      			     throw new IdNotFoundException("AddressId does Not Found");
+      		     }
 
       		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
       		     responseStructure.setStatusCode(HttpStatus.OK.value());
@@ -152,16 +179,16 @@ public class BankService {
       		     responseStructure.setData(bank.get());
       		     
       		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
-      	   }
+      	        }
             
-          //8) Get Bank By City
-            public ResponseEntity<ResponseStructure<List<Bank>>> getBankByCity(String city){
+                //8) Get Bank By City
+                public ResponseEntity<ResponseStructure<List<Bank>>> getBankByCity(String city){
         		
-       		   List<Bank> banks=bankRepository.findByAddressCity(city);
-       		   
-       		   if(banks.isEmpty()) {
-       			   throw new IdNotFoundException("City does Not Found");
-       		   }
+       		    List<Bank> banks=bankRepository.findByAddressCity(city);
+       		    
+       		    if(banks.isEmpty()) {
+       			    throw new NoRecordAvailableException("No Banks Found In This City");
+       		    }
        		  
        		     ResponseStructure<List<Bank>> responseStructure = new ResponseStructure<>();
        		     responseStructure.setStatusCode(HttpStatus.OK.value());
@@ -169,22 +196,22 @@ public class BankService {
        		     responseStructure.setData(banks);
        		     
        		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
-       	   }
+       	        }
             
-            //9) get Bank By ContactNumber
-            public ResponseEntity<ResponseStructure<Bank>> getBankByContactNumber(String contactNumber){
-        		   Optional<Bank> bank=bankRepository.findByContactNumber(contactNumber);
+                     //9) get Bank By ContactNumber
+                     public ResponseEntity<ResponseStructure<Bank>> getBankByContactNumber(String contactNumber){
+        		     Optional<Bank> bank=bankRepository.findByContactNumber(contactNumber);
         		   
-        		   if(bank.isEmpty()) {
-        			   throw new IdNotFoundException("ContactNumber does Not Found");
-        		   }
+        		     if(bank.isEmpty()) {
+        			      throw new NoRecordAvailableException("No Bank Found With This Contact Number");
+        		     }
         		     ResponseStructure<Bank> responseStructure = new ResponseStructure<>();
         		     responseStructure.setStatusCode(HttpStatus.OK.value());
-        		     responseStructure.setMessage("Bank found successful");
+        		     responseStructure.setMessage("Bank found successfully");
         		     responseStructure.setData(bank.get());
         		     
         		     return new ResponseEntity<>(responseStructure,HttpStatus.OK);
-        	   }        
+        	         }        
    }
            
 	
