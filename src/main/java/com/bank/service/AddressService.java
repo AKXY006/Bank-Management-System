@@ -13,6 +13,7 @@ import com.bank.entity.Address;
 import com.bank.entity.Bank;
 import com.bank.exception.CityNotFoundException;
 import com.bank.exception.IdNotFoundException;
+import com.bank.exception.NoRecordAvailableException;
 import com.bank.repository.AddressRepository;
 import com.bank.repository.BankRepository;
 import com.bank.util.ResponseStructure;
@@ -63,7 +64,7 @@ public class AddressService{
 		
 		ResponseStructure<Address> responseStructure = new ResponseStructure<Address>();
 		responseStructure.setStatusCode(HttpStatus.OK.value());
-		responseStructure.setMessage("Address update Successfully");
+		responseStructure.setMessage("Address updated Successfully");
 		responseStructure.setData(updatedAddress);
 		
 		return new ResponseEntity<>(responseStructure,HttpStatus.OK);
@@ -76,8 +77,12 @@ public class AddressService{
 		    if(optional.isEmpty()) {
 			   throw new IdNotFoundException("Id Not Found");
 		    }
-			   Bank bank = optional.get();
-			   Address address = bank.getAddress();
+		    Bank bank = optional.get();
+		    if (bank.getAddress() == null) {
+		        throw new NoRecordAvailableException("Address Not Found");
+		    }
+
+		    Address address = bank.getAddress();
 			     
 			  ResponseStructure<Address> responseStructure = new ResponseStructure<Address>();
 			  responseStructure.setStatusCode(HttpStatus.OK.value());
@@ -97,7 +102,7 @@ public class AddressService{
 		   
 		   ResponseStructure<List<Address>> responseStructure = new ResponseStructure<>();
 		   responseStructure.setStatusCode(HttpStatus.OK.value());
-		   responseStructure.setMessage("Adress Found Successfully");
+		   responseStructure.setMessage("Adresses Found Successfully");
 		   responseStructure.setData(optional);
 		   
 		   return ResponseEntity.ok(responseStructure);
@@ -113,14 +118,14 @@ public class AddressService{
 		
 		   ResponseStructure<List<Address>> responseStructure = new ResponseStructure<>();
 		   responseStructure.setStatusCode(HttpStatus.OK.value());
-		   responseStructure.setMessage("Adress Found Successfully");
+		   responseStructure.setMessage("Adresses Found Successfully");
 		   responseStructure.setData(optional);
 		   
 		   return ResponseEntity.ok(responseStructure);  
 	   }
 	   
-	   public ResponseEntity<ResponseStructure<List<Address>>> findByPincode(String city){
-		   List <Address> optional = addressRepository.findByPincode(city);
+	   public ResponseEntity<ResponseStructure<List<Address>>> findByPincode(String pincode){
+		   List <Address> optional = addressRepository.findByPincode(pincode);
 		   
 		   if(optional.isEmpty()) {
 			   throw new CityNotFoundException("Pincode Not Found");
@@ -134,11 +139,4 @@ public class AddressService{
 		   return ResponseEntity.ok(responseStructure);
 		   
 	   }
-	
-	   
-	   
-	
-	
-
-
 }

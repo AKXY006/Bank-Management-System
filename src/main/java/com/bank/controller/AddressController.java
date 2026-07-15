@@ -42,7 +42,7 @@ public class AddressController {
 		return addressService.findByCity(city);
 	}
 	
-	@GetMapping("/{city}/{street}")
+	@GetMapping("city/{city}/street/{street}")
 	public ResponseEntity<ResponseStructure<List<Address>>> findByCityAndStreet(@PathVariable String city, @PathVariable String street ){
 		return addressService.findByCityAndStreet(city,street);
 	}
