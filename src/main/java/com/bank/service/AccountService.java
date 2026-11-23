@@ -1,10 +1,10 @@
 package com.bank.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,11 +32,13 @@ import jakarta.transaction.Transactional;
 @Service
 public class AccountService{
 	
-	@Autowired
-	private AccountRepository accountRepository;
-	
-	@Autowired
-	private BankRepository bankRepository;
+	private final AccountRepository accountRepository;
+	private final BankRepository bankRepository;
+
+	public AccountService(AccountRepository accountRepository, BankRepository bankRepository) {
+		this.accountRepository = accountRepository;
+		this.bankRepository = bankRepository;
+	}
 	
 	   //1) create account
 	    public ResponseEntity<ResponseStructure<Account>>  saveAccount(Account account , Integer bankId){
@@ -52,15 +54,22 @@ public class AccountService{
 			throw new AccountNumberAlreadyExistException("Account number already exists");
 		}
 		
-		if(account.getAccountType() == AccountType.SAVING && account.getBalance() < 1000){
+		if (account.getBalance() == null || account.getAccountType() == null) {
+		    throw new RuleValidationException("Account type and balance are required");
+		}
+
+		if (account.getAccountType() == AccountType.SAVING
+				&& account.getBalance().compareTo(BigDecimal.valueOf(1000)) < 0) {
 		    throw new RuleValidationException("Minimum balance for Savings Account is 1000");
 		}
 
-		if(account.getAccountType() == AccountType.CURRENT && account.getBalance() < 5000){
+		if (account.getAccountType() == AccountType.CURRENT
+				&& account.getBalance().compareTo(BigDecimal.valueOf(5000)) < 0) {
 		    throw new RuleValidationException("Minimum balance for Current Account is 5000");
 		}
 
-		if(account.getAccountType() == AccountType.FIXED_DEPOSIT && account.getBalance() < 10000){
+		if (account.getAccountType() == AccountType.FIXED_DEPOSIT
+				&& account.getBalance().compareTo(BigDecimal.valueOf(10000)) < 0) {
 		    throw new RuleValidationException("Minimum balance for Fixed Deposit Account is 10000");
 		}
 		
@@ -129,9 +138,9 @@ public class AccountService{
 	
 	    
 	        //5)deposite Amount
-	        public ResponseEntity<ResponseStructure<Account>> depositAmount(Long accountNumber, Double depositBalance){
+	        public ResponseEntity<ResponseStructure<Account>> depositAmount(Long accountNumber, BigDecimal depositBalance){
 	    	 
-	    	 if(depositBalance<=0) {
+			if (depositBalance == null || depositBalance.compareTo(BigDecimal.ZERO) <= 0) {
 	    		 throw new RuleValidationException("Deposit amount must be greater than 0");
 	    	 }
 	    	 
@@ -142,7 +151,7 @@ public class AccountService{
 	    	 }
 	    	 
 	    	 Account account = optional.get();
-	    	 account.setBalance(account.getBalance()+depositBalance);
+			account.setBalance(account.getBalance().add(depositBalance));
 	    	 Account savedAccount = accountRepository.save(account);
 	    	 
 	    	 ResponseStructure<Account> responseStructure = new ResponseStructure<>();
@@ -154,9 +163,9 @@ public class AccountService{
 	        }
 	     
 	        //6) Withdraw Amount
-	        public ResponseEntity<ResponseStructure<Account>> withdrawAmount(Long accountNumber, Double withdrawalAmount) {
+	        public ResponseEntity<ResponseStructure<Account>> withdrawAmount(Long accountNumber, BigDecimal withdrawalAmount) {
 
-	         if (withdrawalAmount <= 0) {
+	         if (withdrawalAmount == null || withdrawalAmount.compareTo(BigDecimal.ZERO) <= 0) {
 	             throw new RuleValidationException("Withdrawal amount must be greater than 0");
 	         }
 
@@ -167,21 +176,24 @@ public class AccountService{
 
 	         Account account = optional.get();
 
-	         if (withdrawalAmount > account.getBalance()) {
+	         if (withdrawalAmount.compareTo(account.getBalance()) > 0) {
 	             throw new RuleValidationException("Insufficient Balance");
 	         }
 
-	         Double remainingBalance = account.getBalance() - withdrawalAmount;
+	         BigDecimal remainingBalance = account.getBalance().subtract(withdrawalAmount);
 
-	         if (account.getAccountType() == AccountType.SAVING && remainingBalance < 1000) {
+	         if (account.getAccountType() == AccountType.SAVING
+					&& remainingBalance.compareTo(BigDecimal.valueOf(1000)) < 0) {
 	             throw new RuleValidationException("Minimum balance for Savings Account is 1000");
 	         }
 
-	         if (account.getAccountType() == AccountType.CURRENT && remainingBalance < 5000) {
+	         if (account.getAccountType() == AccountType.CURRENT
+					&& remainingBalance.compareTo(BigDecimal.valueOf(5000)) < 0) {
 	             throw new RuleValidationException("Minimum balance for Current Account is 5000");
 	         }
 
-	         if (account.getAccountType() == AccountType.FIXED_DEPOSIT && remainingBalance < 10000) {
+	         if (account.getAccountType() == AccountType.FIXED_DEPOSIT
+					&& remainingBalance.compareTo(BigDecimal.valueOf(10000)) < 0) {
 	             throw new RuleValidationException("Minimum balance for Fixed Deposit Account is 10000");
 	         }
 
@@ -199,7 +211,7 @@ public class AccountService{
 	     
 	            //7)transfer amount 
 	            @Transactional
-	            public ResponseEntity<ResponseStructure<Account>> transferBalance(Long senderAccountNumber,Long receiverAccountNumber,Double transferBalance) {
+	            public ResponseEntity<ResponseStructure<Account>> transferBalance(Long senderAccountNumber,Long receiverAccountNumber,BigDecimal transferBalance) {
 
 	            Optional<Account> senderAccount = accountRepository.findByAccountNumber(senderAccountNumber);
 	            if (senderAccount.isEmpty()) {
@@ -211,35 +223,38 @@ public class AccountService{
 	                throw new AccountNotFoundException("Receiver account number does not exist");
 	            }
 
-	            if (transferBalance <= 0) {
+	            if (transferBalance == null || transferBalance.compareTo(BigDecimal.ZERO) <= 0) {
 	                throw new RuleValidationException("Transfer amount must be greater than 0");
 	            }
 
 	            Account sAccount = senderAccount.get();
 	            Account rAccount = receiverAccount.get();
 
-	            if (transferBalance > sAccount.getBalance()) {
+	            if (transferBalance.compareTo(sAccount.getBalance()) > 0) {
 	                throw new RuleValidationException("Insufficient balance");
 	            }
 
-	            Double remainingBalance = sAccount.getBalance() - transferBalance;
+	            BigDecimal remainingBalance = sAccount.getBalance().subtract(transferBalance);
 
-	            if (sAccount.getAccountType() == AccountType.SAVING && remainingBalance < 1000) {
+	            if (sAccount.getAccountType() == AccountType.SAVING
+						&& remainingBalance.compareTo(BigDecimal.valueOf(1000)) < 0) {
 	                throw new RuleValidationException("Minimum balance for Savings Account is 1000");
 	            }
 
-	            if (sAccount.getAccountType() == AccountType.CURRENT && remainingBalance < 5000) {
+	            if (sAccount.getAccountType() == AccountType.CURRENT
+						&& remainingBalance.compareTo(BigDecimal.valueOf(5000)) < 0) {
 	                throw new RuleValidationException("Minimum balance for Current Account is 5000");
 	            }
 
-	            if (sAccount.getAccountType() == AccountType.FIXED_DEPOSIT && remainingBalance < 10000) {
+	            if (sAccount.getAccountType() == AccountType.FIXED_DEPOSIT
+						&& remainingBalance.compareTo(BigDecimal.valueOf(10000)) < 0) {
 	                throw new RuleValidationException("Minimum balance for Fixed Deposit Account is 10000");
 	            }
 
 	            sAccount.setBalance(remainingBalance);
 	            Account savedAccount = accountRepository.save(sAccount);
 
-	            rAccount.setBalance(rAccount.getBalance() + transferBalance);
+	            rAccount.setBalance(rAccount.getBalance().add(transferBalance));
 	            accountRepository.save(rAccount);
 
 	            ResponseStructure<Account> responseStructure = new ResponseStructure<>();
@@ -290,7 +305,7 @@ public class AccountService{
 	           }
 	
 	          //10) get by account balance > value
-	          public ResponseEntity<ResponseStructure<List<Account>>>  findByAccountBalanceGreaterThan(Double balance){
+	          public ResponseEntity<ResponseStructure<List<Account>>>  findByAccountBalanceGreaterThan(BigDecimal balance){
 		
 		      List<Account> accounts = accountRepository.findByBalanceGreaterThan(balance);
 		

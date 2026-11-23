@@ -1,5 +1,7 @@
 package com.bank.entity;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -28,21 +30,21 @@ public class Account {
 	@Column(name = "Account_Id")
 	private Integer accountId;
 	
-	@Column(name = "Account_Number" , unique = true)
+	@Column(name = "Account_Number", unique = true, nullable = false)
 	private Long accountNumber;
 	
-	@Column(name =  "Account_Holder_Name" )
+	@Column(name = "Account_Holder_Name", nullable = false)
 	private String accountHolderName;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name = "Account_Type")
+	@Column(name = "Account_Type", nullable = false)
 	private AccountType accountType;
 	
-	@Column(name ="Balance")
-	private Double balance;
+	@Column(name = "Balance", precision = 19, scale = 2, nullable = false)
+	private BigDecimal balance;
 	
 	@ManyToOne
-	@JoinColumn(name = "Bank_Id")
+	@JoinColumn(name = "Bank_Id", nullable = false)
 	@JsonIgnore
 	private Bank bank;
 	

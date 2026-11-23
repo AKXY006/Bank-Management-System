@@ -1,9 +1,8 @@
 package com.bank.controller;
 
-
+import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,8 +25,11 @@ import com.bank.util.ResponseStructure;
 @RequestMapping("/account")
 public class AccountController {
 	
-	@Autowired
-	private AccountService accountService;
+	private final AccountService accountService;
+
+	public AccountController(AccountService accountService) {
+		this.accountService = accountService;
+	}
 	
 	@PostMapping("/{bankId}")
 	public ResponseEntity<ResponseStructure<Account>> saveAccount( @RequestBody Account account, @PathVariable Integer bankId){
@@ -50,17 +52,17 @@ public class AccountController {
 	}
 	
 	@PatchMapping("/deposit/{accountNumber}/{deposit}")
-	public ResponseEntity<ResponseStructure<Account>>  deposit(@PathVariable Long accountNumber,@PathVariable Double deposit){
+	public ResponseEntity<ResponseStructure<Account>>  deposit(@PathVariable Long accountNumber,@PathVariable BigDecimal deposit){
 		return accountService.depositAmount(accountNumber, deposit);
 	}
 	
 	@PatchMapping("/withdraw/{accountNumber}/{withdrawalAmount}")
-	public ResponseEntity<ResponseStructure<Account>> withdraw(@PathVariable Long accountNumber, @PathVariable Double withdrawalAmount) {
+	public ResponseEntity<ResponseStructure<Account>> withdraw(@PathVariable Long accountNumber, @PathVariable BigDecimal withdrawalAmount) {
 	    return accountService.withdrawAmount(accountNumber, withdrawalAmount);
 	}
 	
 	@PatchMapping("/transfer/{senderAN}/{receiverAN}/{balance}")
-	public ResponseEntity<ResponseStructure<Account>> transferAmount(@PathVariable Long senderAN,@PathVariable Long receiverAN,@PathVariable Double balance) {
+	public ResponseEntity<ResponseStructure<Account>> transferAmount(@PathVariable Long senderAN,@PathVariable Long receiverAN,@PathVariable BigDecimal balance) {
 	    return accountService.transferBalance(senderAN, receiverAN, balance);
 	}
 	
@@ -75,7 +77,7 @@ public class AccountController {
 	}
 	
 	@GetMapping("/balancegreaterthan/{balance}")
-	public ResponseEntity<ResponseStructure<List<Account>>> findByBalanceGreaterThan(@PathVariable Double balance){
+	public ResponseEntity<ResponseStructure<List<Account>>> findByBalanceGreaterThan(@PathVariable BigDecimal balance){
 		return accountService.findByAccountBalanceGreaterThan(balance);
 	}
 	

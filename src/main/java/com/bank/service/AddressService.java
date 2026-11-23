@@ -4,7 +4,6 @@ package com.bank.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,11 +21,13 @@ import com.bank.util.ResponseStructure;
 @Service
 public class AddressService{
 	
-	@Autowired
-	private AddressRepository addressRepository;
-	
-	@Autowired
-	private BankRepository bankRepository;
+	private final AddressRepository addressRepository;
+	private final BankRepository bankRepository;
+
+	public AddressService(AddressRepository addressRepository, BankRepository bankRepository) {
+		this.addressRepository = addressRepository;
+		this.bankRepository = bankRepository;
+	}
 	
 	public ResponseEntity<ResponseStructure<Address>> findById(Integer id){
 		

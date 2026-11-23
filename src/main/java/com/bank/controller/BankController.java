@@ -3,7 +3,6 @@ package com.bank.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,8 +23,11 @@ import com.bank.util.ResponseStructure;
 @RequestMapping("/bank")
 public class BankController {
 	
-	@Autowired
-	private BankService bankService;
+	private final BankService bankService;
+
+	public BankController(BankService bankService) {
+		this.bankService = bankService;
+	}
 	
 	@PostMapping
 	public ResponseEntity<ResponseStructure<Bank>> saveBank(@RequestBody Bank bank){

@@ -4,7 +4,6 @@ package com.bank.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,8 +22,11 @@ import com.bank.util.ResponseStructure;
 @Service
 public class BankService {
 
-	@Autowired
-	private BankRepository bankRepository;
+	private final BankRepository bankRepository;
+
+	public BankService(BankRepository bankRepository) {
+		this.bankRepository = bankRepository;
+	}
 	
 	   //1) create bank
 	   public ResponseEntity<ResponseStructure<Bank>> saveBank(Bank bank){

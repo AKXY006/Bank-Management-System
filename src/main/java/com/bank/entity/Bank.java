@@ -4,8 +4,6 @@ package com.bank.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,20 +30,20 @@ public class Bank {
 	@Column(name = "Bank_Id")
 	private Integer bankId;
 	
-	@Column(name = "Bank_Name")
+	@Column(name = "Bank_Name", nullable = false)
 	private String bankName;
 	
-	@Column(name =  "IFSC_Code" , unique = true )
+	@Column(name = "IFSC_Code", unique = true, nullable = false)
 	private String ifscCode;
 	
-	@Column(name =  "Branch_Name")
+	@Column(name = "Branch_Name", nullable = false)
 	private String branchName;
 	
-	@Column(name ="Contact_Number" , length = 10 , unique = true)
+	@Column(name = "Contact_Number", length = 10, unique = true, nullable = false)
 	private String contactNumber;
 	
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "Address_Id")
+	@JoinColumn(name = "Address_Id", nullable = false)
 	private Address address;
 	
 

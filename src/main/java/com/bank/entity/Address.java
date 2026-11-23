@@ -25,16 +25,16 @@ public class Address {
 	@Column(name ="Address_Id")
 	private Integer addressId;
 	
-	@Column(name = "Street")
+	@Column(name = "Street", nullable = false)
 	private String street;
 	
-	@Column(name="City")
+	@Column(name = "City", nullable = false)
 	private String city;
 	
-	@Column(name="State")
+	@Column(name = "State", nullable = false)
 	private String state;
 	
-	@Column(name = "Pincode" , length = 6)
+	@Column(name = "Pincode", length = 6, nullable = false)
 	private String pincode;
 	
 	@OneToOne(mappedBy = "address")

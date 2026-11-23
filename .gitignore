@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker ###
+.dockerignore
+Dockerfile
+docker-compose.yml
+init-data.sql

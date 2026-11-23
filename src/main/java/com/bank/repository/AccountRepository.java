@@ -1,5 +1,6 @@
 package com.bank.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer>{
 
 	List<Account> findByAccountType(AccountType accountType);
 
-	List<Account> findByBalanceGreaterThan(Double balance);
+	List<Account> findByBalanceGreaterThan(BigDecimal balance);
 	
 	Optional<Account> findByAccountNumber(Long accountNumber);
 
